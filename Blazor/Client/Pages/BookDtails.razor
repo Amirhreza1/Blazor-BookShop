@@ -1,0 +1,49 @@
+﻿@page "/product/{id:int}"
+@inject IBookService bookService; 
+
+@if(product == null)
+{
+    <span>Loading Books...</span>
+}
+else
+{
+    if (string.IsNullOrEmpty(message))
+    {
+        
+    <div class=" ">
+        <div class="">
+            <img class="media-img" src="@product.ImageUrl" alt="@product.Title">
+        </div>
+        <div class="">
+            <h2 class="">@product.Title</h2>
+            <p>@product.Description</p>
+            <h4 class="">@product.ISBN</h4>
+            <h4 class="">@product.ReleaseDate</h4>
+            <h4 class="">@product.Price</h4>
+
+        </div>
+        </div>
+    }
+    else
+    {
+        <p>@message</p>
+    }
+}
+@code {
+    private Product? product = null;
+    private string message = string.Empty;
+    [Parameter]
+    public int Id { get; set; }
+    protected override Task OnInitializedAsync()
+    {
+        product = bookService.Products.Find(Product => Product.Id == Id);
+        if (product == null)
+        {
+            message = "This book doese not exist my boy :).";
+            product = new();
+        }
+        return base.OnInitializedAsync();
+    }
+
+ 
+}

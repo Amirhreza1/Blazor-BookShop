@@ -1,0 +1,38 @@
+﻿@inject IBookService bookService
+@implements IDisposable
+
+@if(bookService.Products == null || bookService.Products.Count == 0)
+{
+    <span>Loading Books...</span>
+}
+else
+{
+    <ul class="list-unstyled">
+        @foreach (var product in bookService.Products)
+        {
+            <li class="media my-3">
+                <div class="media-img-wrapper mr-2">
+                        <a href="/product/@product.Id">
+                        <img class="media-img" src="@product.ImageUrl" alt="@product.Title" />
+                    </a>
+                </div>
+                <div class="media-body">
+                    <a href="/product/@product.Id">
+                        <h3 class="mb-0">@product.Title</h3>
+                    </a>
+                </div>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        bookService.BooksChanges += StateHasChanged;
+    }
+    public void Dispose()
+    {
+        bookService.BooksChanges -= StateHasChanged;
+    }
+}

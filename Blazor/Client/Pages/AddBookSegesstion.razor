@@ -1,0 +1,38 @@
+﻿@page "/addBookSegesstion"
+@using Blazor.Shared
+@inject HttpClient _client
+@inject NavigationManager _navigationManager
+
+
+<h3>AddBookSegesstion</h3>
+<p>Här kan skriva ditnamn och vilken book du vill att det ska finnas med på hemsidan som inte redan finns :) </p>
+<EditForm Model="CurrentMessage" OnSubmit="SendMessage">
+    <div>
+        <label>Name</label>
+        <InputText class="form-control" @bind-Value="CurrentMessage.Name"></InputText>
+    </div>
+    <div>
+        <label>Message</label>
+        <InputTextArea class="form-control" @bind-Value="CurrentMessage.Message"></InputTextArea>
+    </div>
+    <button class="btn btn-primary mt-2">Send</button>
+
+</EditForm>
+
+<hr class="mt-1 mb-1" />
+
+<ul class="container">
+    <Virtualize Items="AllMessages.OrderByDescending(m => m.TimeSent).ToList()" Context="message">
+        <li class="card">
+            <label class="card-header bg-dark text-info text-lg-start">@message.Name</label>
+            <p class="card-body bg-secondary text-warning text-lg-center">@message.Message</p>
+            <label class="card-footer bg-secondary text-info text-lg-end">@message.TimeSent.ToString()</label>
+        </li>
+    </Virtualize>
+</ul>
+
+
+
+
+
+

@@ -1,0 +1,82 @@
+﻿@inject NavigationManager _Navigation
+@inject ICategoryService categoryService
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Blazor</a>
+        <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</div>
+
+<div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            @if (Categories == null)
+            {
+                <p>Loading...</p>
+            }
+            else
+            {
+
+                @foreach (var category in Categories)
+                {
+                    <NavLink class="nav-link" href="@category.Url">
+                        @category.Name
+                    </NavLink>
+                }
+            }
+        </div>
+
+        <AuthorizeView>
+            <Authorized>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <NavLink class="nav-link text-nowrap" href="Add">Add Event</NavLink>
+                    </li>
+                    <li class="nav-item">
+                        <NavLink class="nav-link px-5 text-nowrap" href="#" @onclick="@(() => _Navigation.NavigateToLogout("authentication/logout", "/"))">Log out (@context.User.Identity?.Name)</NavLink>
+                    </li>
+                </ul>
+            </Authorized>
+            <NotAuthorized>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <NavLink class="nav-link px-5" href="#" @onclick="@(() => _Navigation.NavigateToLogin("authentication/login"))">Login</NavLink>
+                    </li>
+                </ul>
+            </NotAuthorized>
+        </AuthorizeView>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="AddBookSegesstion" Match="NavLinkMatch.All">
+                <span class="oi oi-dollar" aria-hidden="true"></span> BookSegesstion
+            </NavLink>
+        </div>
+    </nav>
+</div>
+
+@code {
+    private bool collapseNavMenu = true;
+
+    private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+    private List<Category> Categories;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await categoryService.GetCategories();
+        if (res.Success)
+        {
+            Categories = res.Data;
+        }
+    }
+}
